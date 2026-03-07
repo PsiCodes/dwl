@@ -13,6 +13,8 @@ static const float focuscolor[]            = COLOR(0x7DAEA3FF);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You can also use glsl colors */
+
+static const unsigned int swipe_min_threshold = 0;
 static const int smartgaps                 = 0;  /* 1 means no outer gap when there is only one window */
 static int gaps                            = 1;  /* 1 means gaps between windows are added */
 static const unsigned int gappx            = 5; /* gap pixel between windows */
@@ -140,6 +142,7 @@ static const char *downvol[]    = { "/usr/bin/wpctl",   "set-volume", "@DEFAULT_
 static const char *mutevol[]    = { "/usr/bin/wpctl",   "set-mute",   "@DEFAULT_AUDIO_SINK@",      "toggle",   NULL };
 static const char *upbright[]   = { "/usr/bin/brightnessctl", "set", "5%+", NULL };
 static const char *downbright[] = { "/usr/bin/brightnessctl", "set", "5%-", NULL };
+#include "shiftview.c"
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> at, etc. */
@@ -161,7 +164,9 @@ static const Key keys[] = {
 //	{ MODKEY,                    XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
 	{ MODKEY,                    XKB_KEY_space,       setlayout,        {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,       togglefloating,   {0} },
-	{ MODKEY,                    XKB_KEY_f,           togglefullscreen, {0} },
+	{ MODKEY,                    XKB_KEY_f,           togglefullscreen, {0} },	
+	{ MODKEY,                    XKB_KEY_a,          shiftview,      { .i = -1 } },
+	{ MODKEY,                    XKB_KEY_semicolon,  shiftview,      { .i = 1 } },
 	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
 	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
@@ -198,4 +203,11 @@ static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
 	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
+};
+
+static const Gesture gestures[] = {
+	{ 0, SWIPE_LEFT, 3, shiftview, { .i = 1 } },
+	{ 0, SWIPE_RIGHT, 3, shiftview, { .i = -1 } },
+//	{ MODKEY, SWIPE_UP, 3, focusstack, {.i = 1} },
+//	{ MODKEY, SWIPE_DOWN, 3, focusstack, {.i = -1} },
 };
