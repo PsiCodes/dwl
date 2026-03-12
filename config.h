@@ -9,7 +9,7 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const unsigned int borderpx         = 2;  /* border pixel of windows */
 static const float rootcolor[]             = COLOR(0x222222ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
-static const float focuscolor[]            = COLOR(0x7DAEA3FF);
+static const float focuscolor[]            = COLOR(0x595959FF);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You can also use glsl colors */
@@ -20,6 +20,7 @@ static int gaps                            = 1;  /* 1 means gaps between windows
 static const unsigned int gappx            = 5; /* gap pixel between windows */
 static const char *cursor_theme            = "breeze_cursors";
 static const char cursor_size[]            = "24"; /* Make sure it's a valid integer, otherwise things will break */
+static const float default_opacity         = 1;
 
 
 /* tagging - TAGCOUNT must be no greater than 31 */
@@ -28,7 +29,8 @@ static const char cursor_size[]            = "24"; /* Make sure it's a valid int
 /* Autostart programs */
 static const char *autostart[] = {
 	"hypridle",NULL,
-	"swaybg", "-i", "/home/pranjal/Pictures/Downloaded/goat.png", "-m", "fill", NULL,
+	"/usr/lib/hyprpolkitagent/hyprpolkitagent",NULL,
+	"swaybg", "-i", "/home/pranjal/Pictures/Downloaded/ShivJi.jpg", "-m", "fill", NULL,
 	"/usr/lib/xdg-desktop-portal",NULL,
 	"/usr/lib/xdg-desktop-portal-wlr",NULL,
 	"/usr/lib/xdg-desktop-portal-gtk",NULL,
@@ -40,9 +42,8 @@ static const char *autostart[] = {
 static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
-	/* app_id             title       tags mask     isfloating   monitor */
-	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1 }, /* Start on ONLY tag "9" */
+	/* app_id   title        tags mask     isfloating    opacity  monitor */
+	{ "zen",     NULL,       0,            0,           0.95f,   -1 }
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
@@ -62,7 +63,7 @@ static const MonitorRule monrules[] = {
    /* name        mfact  nmaster scale layout       rotate/reflect                x    y
     * example of a HiDPI laptop monitor:
     { "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 }, */
-	{ NULL,       0.55f, 1,      1.25,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ NULL,       0.5f, 1,      1.25,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	/* default monitor rule: can be changed but cannot be eliminated; at least one monitor rule must exist */
 };
 
@@ -85,7 +86,7 @@ static const int drag_lock = 0;
 static const int natural_scrolling = 1;
 static const int disable_while_typing = 1;
 static const int left_handed = 0;
-static const int middle_button_emulation = 0;
+static const int middle_button_emulation = 1;
 /* You can choose between:
 LIBINPUT_CONFIG_SCROLL_NO_SCROLL
 LIBINPUT_CONFIG_SCROLL_2FG
@@ -178,10 +179,12 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                    2),
 	TAGKEYS(          XKB_KEY_4, XKB_KEY_dollar,                        3),
 	TAGKEYS(          XKB_KEY_5, XKB_KEY_percent,                       4),
-	TAGKEYS(          XKB_KEY_6, XKB_KEY_asciicircum,                   5),
-	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                     6),
-	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                      7),
-	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                     8),
+        { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          rotate_clients, {.i = +1} },
+        { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          rotate_clients, {.i = -1} },
+//	TAGKEYS(          XKB_KEY_6, XKB_KEY_asciicircum,                   5),
+//	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                     6),
+//	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                      7),
+//	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                     8),
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_x,           quit,             {0} },
     	{ 0,                 XKB_KEY_XF86AudioLowerVolume, spawn,      {.v = downvol } },
     	{ 0,                 XKB_KEY_XF86AudioMute,        spawn,      {.v = mutevol } },
