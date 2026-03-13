@@ -11,6 +11,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+#include <regex.h>
 #include <wayland-server-core.h>
 #include <wlr/backend.h>
 #include <wlr/backend/libinput.h>
@@ -250,6 +251,8 @@ typedef struct {
 	int isfloating;
 	float opacity;
 	int monitor;
+  float w;
+  float h;
 } Rule;
 
 typedef struct {
@@ -398,6 +401,7 @@ static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
 static void zoom(const Arg *arg);
+static int regex_match(const char *pattern, const char *str);
 static void rotate_clients(const Arg *arg);
 
 /* variables */
@@ -543,13 +547,18 @@ applyrules(Client *c)
 	int i;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
+  int newwidth;
+  int newheight;
+  int newx;
+  int newy;
+  int apply_resize = 0;
 
 	appid = client_get_appid(c);
 	title = client_get_title(c);
 
 	for (r = rules; r < END(rules); r++) {
-		if ((!r->title || strstr(title, r->title))
-				&& (!r->id || strstr(appid, r->id))) {
+		if ((!r->title || regex_match(r->title, title))
+				&& (!r->id || regex_match(r->id, appid))) {
 			c->isfloating = r->isfloating;
 			c->opacity = r->opacity;
 			newtags |= r->tags;
@@ -557,12 +566,30 @@ applyrules(Client *c)
 			wl_list_for_each(m, &mons, link) {
 				if (r->monitor == i++)
 					mon = m;
+        if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
+					/* client is floating or in floating layout */
+          struct wlr_box b = mon->m;
+          newwidth  = (int)round((r->w >= 0) ? (r->w <= 1 ? b.width  * r->w       : r->w)       : c->geom.width);
+					newheight = (int)round((r->h >= 0) ? (r->h <= 1 ? b.height * r->h       : r->h)       : c->geom.height);
+          newx = (m->w.width - newwidth) / 2 + m->m.x;;
+          newy = (m->w.height - newheight) / 2 + m->m.y;
+
+					apply_resize = 1;
+				}
 			}
 		}
 	}
 
 	c->isfloating |= client_is_float_type(c);
 	setmon(c, mon, newtags);
+  	if (apply_resize) {
+		resize(c, (struct wlr_box){
+				.x = newx,
+				.y = newy,
+				.width = newwidth,
+				.height = newheight,
+		}, 0);
+	}
 }
 
 void
@@ -3610,6 +3637,19 @@ static void rotate_clients(const Arg *arg) {
 		wl_list_insert(append_to, elem);
 		arrange(selmon);
 	} 
+}
+
+int
+regex_match(const char *pattern, const char *str) {
+  regex_t regex;
+  int reti;
+  if (regcomp(&regex, pattern, REG_EXTENDED) != 0)
+    return 0;
+  reti = regexec(&regex, str, (size_t)0, NULL, 0);
+  regfree(&regex);
+  if (reti == 0)
+    return 1;
+  return 0;
 }
 
 #ifdef XWAYLAND
