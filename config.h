@@ -29,9 +29,11 @@ static const int respect_monitor_reserved_area = 1;
 
 /* Autostart programs */
 static const char *autostart[] = {
+	"dbus-update-activation-environment", "--all",NULL,
+	"wl-clip-persist", "--clipboard", "regular",NULL,
 	"hypridle",NULL,
 	"/usr/lib/hyprpolkitagent/hyprpolkitagent",NULL,
-	"swaybg", "-i", "/home/pranjal/Pictures/Downloaded/ShivJi.jpg", "-m", "fill", NULL,
+	"swaybg", "-i", "/home/pranjal/Pictures/Downloaded/Mountains.jpg", "-m", "fill", NULL,
 	"/usr/lib/xdg-desktop-portal",NULL,
 	"/usr/lib/xdg-desktop-portal-wlr",NULL,
 	"/usr/lib/xdg-desktop-portal-gtk",NULL,
@@ -44,7 +46,6 @@ static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   opacity   monitor */
-{ "Alacritty",          NULL,       0,            1,           1,      -1 ,1280,720},
 { "xdg-desktop-portal-gtk",          NULL,       0,            1,           1,      -1 ,800,500},
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
