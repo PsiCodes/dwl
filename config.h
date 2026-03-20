@@ -33,7 +33,7 @@ static const char *autostart[] = {
 	"wl-clip-persist", "--clipboard", "regular",NULL,
 	"hypridle",NULL,
 	"/usr/lib/hyprpolkitagent/hyprpolkitagent",NULL,
-	"swaybg", "-i", "/home/pranjal/Pictures/Downloaded/Mountains.jpg", "-m", "fill", NULL,
+	"sh","-c","swaybg -i $HOME/Pictures/Downloaded/Mountains.jpg -m fill", NULL,
 	"/usr/lib/xdg-desktop-portal",NULL,
 	"/usr/lib/xdg-desktop-portal-wlr",NULL,
 	"/usr/lib/xdg-desktop-portal-gtk",NULL,

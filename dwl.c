@@ -547,11 +547,11 @@ applyrules(Client *c)
 	int i;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
-  int newwidth;
-  int newheight;
-  int newx;
-  int newy;
-  int apply_resize = 0;
+    int newwidth;
+    int newheight;
+    int newx;
+    int newy;
+    int apply_resize = 0;
 
 	appid = client_get_appid(c);
 	title = client_get_title(c);
@@ -567,15 +567,14 @@ applyrules(Client *c)
 				if (r->monitor == i++)
 					mon = m;
         if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
-					/* client is floating or in floating layout */
-          struct wlr_box b = mon->m;
-          newwidth  = (int)round((r->w >= 0) ? (r->w <= 1 ? b.width  * r->w       : r->w)       : c->geom.width);
-					newheight = (int)round((r->h >= 0) ? (r->h <= 1 ? b.height * r->h       : r->h)       : c->geom.height);
-          newx = (m->w.width - newwidth) / 2 + m->m.x;;
-          newy = (m->w.height - newheight) / 2 + m->m.y;
-
-					apply_resize = 1;
-				}
+				/* client is floating or in floating layout */
+          		struct wlr_box b = mon->m;
+          		newwidth  = (int)round((r->w >= 0) ? (r->w <= 1 ? b.width  * r->w       : r->w)       : c->geom.width);
+		        newheight = (int)round((r->h >= 0) ? (r->h <= 1 ? b.height * r->h       : r->h)       : c->geom.height);
+          		newx = (m->w.width - newwidth) / 2 + m->m.x;;
+          		newy = (m->w.height - newheight) / 2 + m->m.y;
+				apply_resize = 1;
+			 	}
 			}
 		}
 	}

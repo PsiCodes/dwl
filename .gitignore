@@ -5,3 +5,5 @@ dwl
 .ccls-cache
 *.rej
 *.orig
+.cache
+compile_commands.json
